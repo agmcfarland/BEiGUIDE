@@ -11,9 +11,11 @@ test_that("make_edit_site_table works", {
     spec_info_combo_overview_table = df_annotations,
     abundance_cutoff = 3)
 
-  testthat::expect_equal(11, nrow(df_edit_sites))
+  testthat::expect_equal(5815, nrow(df_edit_sites))
 
-  testthat::expect_equal(13, ncol(df_edit_sites))
+  testthat::expect_equal(11, nrow(df_edit_sites %>% dplyr::filter(pass_abundance_filter == T)))
+
+  testthat::expect_equal(15, ncol(df_edit_sites))
 
 
 })

@@ -9,6 +9,7 @@ quantify_edits(
   output_directory,
   analysis_name = "quantify_edits",
   abundance_cutoff = 3,
+  expected_cut_distance_from_pam = 3,
   end_distance_from_cut_site = 20,
   cut_site_start_distance_within_gRNA = 3,
   cut_site_start_distance_outside_gRNA = 3,
@@ -22,39 +23,54 @@ quantify_edits(
 )
 }
 \arguments{
-\item{base_directory}{Character. The base directory where input data is located.}
+\item{base_directory}{Character. Base directory where input data is located.}
 
-\item{output_directory}{Character. The directory where output data will be saved.}
+\item{output_directory}{Character. Directory where output data will be saved.}
 
-\item{analysis_name}{Character. The name of the analysis (default: 'quantify_edits').}
+\item{analysis_name}{Character. Name for this analysis (default: \code{'quantify_edits'}).}
 
-\item{abundance_cutoff}{Numeric. The minimum abundance cutoff for including an edit site (default: 3).}
+\item{abundance_cutoff}{Numeric. Minimum read count for including an edit site (default: \code{3}).}
 
-\item{end_distance_from_cut_site}{Numeric. The maximum distance from the cut site to consider bases (default: 20).}
+\item{expected_cut_distance_from_pam}{Numeric. Distance from PAM where the cut site is expected (default: \code{3}).}
 
-\item{cut_site_start_distance_within_gRNA}{Numeric. The distance within gRNA to start considering cut sites (default: 3).}
+\item{end_distance_from_cut_site}{Numeric. Maximum distance from the cut site to consider bases (default: \code{20}).}
 
-\item{cut_site_start_distance_outside_gRNA}{Numeric. The distance outside gRNA to start considering cut sites (default: 3).}
+\item{cut_site_start_distance_within_gRNA}{Numeric. Distance within the gRNA to start considering cut sites (default: \code{3}).}
 
-\item{reference_genome_path}{Character. Path to a fasta file used to generate the base iGUIDE result (default: '').}
+\item{cut_site_start_distance_outside_gRNA}{Numeric. Distance outside the gRNA to start considering cut sites (default: \code{3}).}
 
-\item{editable_base}{Character. The base that is being edited (default: 'A').}
+\item{reference_genome_path}{Character. Path to a FASTA file used to retrieve reference genome sequence (default: \code{''}).}
 
-\item{expected_edit}{Character. The expected base after editing (default: 'G').}
+\item{editable_base}{Character. The original base that is targeted for editing (default: \code{'A'}).}
 
-\item{binomial_p_value_threshold}{Numeric. The p-value threshold for determining significance using a binomial test (default: 0.05).}
+\item{expected_edit}{Character. The expected base after editing (default: \code{'G'}).}
 
-\item{binomial_direction}{Character. The direction of the binomial test ('greater', 'less', or 'two-sided') (default: 'greater').}
+\item{binomial_p_value_threshold}{Numeric. P-value threshold for determining significance using a binomial test (default: \code{0.05}).}
 
-\item{n_processors}{Numeric. The number of processors to use for parallel processing (default: 4).}
+\item{binomial_direction}{Character. Direction of the binomial test: \code{'greater'}, \code{'less'}, or \code{'two-sided'} (default: \code{'greater'}).}
 
-\item{overwrite}{Logical. Whether to overwrite existing analysis output (default: TRUE).}
+\item{n_processors}{Numeric. Number of CPU cores to use for parallel processing (default: \code{4}).}
+
+\item{overwrite}{Logical. Whether to overwrite existing analysis output (default: \code{TRUE}).}
 }
 \value{
-Writes a CSV and RDS file containing base percentages and statistical results to the specified output directory.
+This function does not return an object. It writes the following to \code{output_directory/analysis_name}:
+\itemize{
+\item \code{run_parameters.csv} / \code{run_parameters.rds} — analysis configuration
+\item \code{edit_sites_overview.csv} / \code{edit_sites_overview.rds} — table of edit site metadata
+\item One directory per edit site containing processed alignments, base composition tables, statistical results, and plots
+\item A log file of all steps and parameters used
+}
 }
 \description{
-This function quantifies edits in sequencing data by processing BAM files, filtering alignments, and calculating base percentages at specific edit sites. It performs statistical testing to determine the significance of edits.
+This function quantifies edits in sequencing data by:
+\itemize{
+\item Parsing and filtering aligned reads from BAM files.
+\item Identifying edit sites based on read abundance thresholds.
+\item Calculating base composition percentages at each edit site.
+\item Performing binomial tests to determine statistical significance of edits.
+}
+Results are written to disk as RDS and CSV files along with logs and per-site plots.
 }
 \examples{
 \dontrun{
@@ -63,14 +79,15 @@ quantify_edits(
   output_directory = "path/to/output_directory",
   analysis_name = "my_analysis",
   abundance_cutoff = 5,
+  expected_cut_distance_from_pam = 3,
   end_distance_from_cut_site = 25,
   cut_site_start_distance_within_gRNA = 4,
   cut_site_start_distance_outside_gRNA = 4,
-  reference_genome_path = 'path/to/genome.fasta',
-  editable_base = 'C',
-  expected_edit = 'T',
+  reference_genome_path = "path/to/genome.fasta",
+  editable_base = "C",
+  expected_edit = "T",
   binomial_p_value_threshold = 0.01,
-  binomial_direction = 'two-sided',
+  binomial_direction = "two-sided",
   n_processors = 6,
   overwrite = FALSE
 )

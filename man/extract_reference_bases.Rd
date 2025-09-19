@@ -4,16 +4,20 @@
 \alias{extract_reference_bases}
 \title{Extract Reference Bases for Edit Sites}
 \usage{
-extract_reference_bases(genomic_sequence, df_base_percentages)
+extract_reference_bases(genomic_sequence, chromosome, start, stop)
 }
 \arguments{
 \item{genomic_sequence}{A \code{BSgenome} object containing the genomic sequence from which reference bases will be extracted.}
 
-\item{df_base_percentages}{A data frame containing base percentages and related information for edit sites.}
+\item{chromosome}{Chromosome of edit site}
+
+\item{start}{Start position for edit site. Relative to + strand of genomic sequence.}
+
+\item{stop}{Stop position edit site. Relative to + strand of genomic sequence.}
 }
 \value{
-A data frame with reference bases integrated into the input \code{df_base_percentages}.
+table with a column with the reference base and its genomic location
 }
 \description{
-This function extracts reference bases for specified edit sites from a genomic sequence and integrates them into a data frame containing base percentages.
+This function extracts the genomic sequence for a defined chromosome with start and stop coordinates. Does not consider strand, assumes coordinates are in a plus strand orientation relative to the provided genomic sequence.
 }

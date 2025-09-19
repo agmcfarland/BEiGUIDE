@@ -1,24 +1,18 @@
 # BEiGUIDE
 
-<!-- Badges start -->
 [![Tests](https://github.com/agmcfarland/BEiGUIDE/actions/workflows/test-build.yml/badge.svg)](https://github.com/agmcfarland/BEiGUIDE/actions/workflows/test-build.yml)
 [![codecov](https://codecov.io/gh/agmcfarland/BEiGUIDE/graph/badge.svg?token=NPALNGNUFJ)](https://codecov.io/gh/agmcfarland/BEiGUIDE)
-<!-- Badges end -->
 
 # Background
 
-`Base editor iGUIDE (BEiGUIDE)` allows for quantification of base edits in on and off-target cut sites identified by iGUIDE.
+`Base Editor iGUIDE (BEiGUIDE)` quantifies base edits in on and off-target cut sites detected by iGUIDE when a base editor-Cas9 fusion enzyme is used.
+
+After running [iGUIDE](https://github.com/cnobles/iGUIDE), `BEiGUIDE` analyzes each position of the protospacer to identify statistically significant changes in the observed nucleotide frequency relative to the expected nucleotide. [Please see our pre-print for more details](https://www.biorxiv.org/content/10.1101/2025.08.26.667396v1.abstract)
 
 # Installation
 
 ```R
 devtools::install_github('agmcfarland/BEiGUIDE')
-```
-
-# Running as a script
-
-```sh
-Rscript -e "BEiGUIDE::quantify_edits('path/to/base_directory', 'path/to/output_directory')"
 ```
 
 # Running within R
@@ -40,50 +34,36 @@ BEiGUIDE::quantify_edits(
   n_processors = 6,
   overwrite = FALSE
 )
+
+BEiGUIDE::quantify_edits_analysus(
+	quantify_edits_output_path = '/path/to/quantify_edits/output'
+	)
 ```
 
-# Parameters
+# quantify_edits() Parameters
 
-```md
-base_directory:
-	Character. The base directory where input data is located.
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| base_directory | Character | Base directory where input data is located | REQUIRED |
+| output_directory | Character | Directory where output data will be saved | REQUIRED |
+| analysis_name | Character | Name of the analysis | "quantify_edits" |
+| abundance_cutoff | Numeric | Minimum read count for including an edit site | 3 |
+| expected_cut_distance_from_pam | Numeric | Distance from PAM where the cut site is expected | 3 |
+| end_distance_from_cut_site | Numeric | Maximum distance from the cut site to consider bases | 20 |
+| cut_site_start_distance_within_gRNA | Numeric | Distance within the gRNA to start considering cut sites | 3 |
+| cut_site_start_distance_outside_gRNA | Numeric | Distance outside the gRNA to start considering cut sites | 3 |
+| reference_genome_path | Character | Path to a FASTA file used to retrieve reference genome sequence | REQUIRED |
+| editable_base | Character | Original base targeted for editing | 'A' |
+| expected_edit | Character | Base that the editable base is expected to be converted into | 'G' |
+| binomial_p_value_threshold | Numeric | P-value threshold for binomial test of significance | 0.05 |
+| binomial_direction | Character | Direction of binomial test ('greater', 'less', 'two.sided') | 'greater' |
+| n_processors | Numeric | Number of CPU cores to use for parallel processing | 4 |
+| overwrite | Logical | Whether to overwrite existing analysis output | TRUE |
 
-output_directory:
-	Character. The directory where output data will be saved.
 
-analysis_name:
-	Character. The name of the analysis (default: 'quantify_edits').
+# Future additions
 
-abundance_cutoff:
-	Numeric. The minimum abundance cutoff for including an edit site (default: 3).
+* Wrapper to run from command line
+* Docker image
 
-end_distance_from_cut_site:
-	Numeric. The maximum distance from the cut site to consider bases (default: 20).
 
-cut_site_start_distance_within_gRNA:
-	Numeric. The distance within gRNA to start considering cut sites (default: 3).
-
-cut_site_start_distance_outside_gRNA:
-	Numeric. The distance outside gRNA to start considering cut sites (default: 3).
-
-reference_genome_path
-	Character. Path to a fasta file used to generate the base iGUIDE result (default: '').
-
-editable_base
-	Character. Base that can be edited by base editor (default: A).
-
-expected_edit
-	Character. The base that edtiable base will be turned into by base editor (default: G).
-
-binomial_p_value_threshold
-	Numeric. Significance threshold for binomial test of proportions to determine if percentage of edited base is significant (default: 0.05). 
-
-binomial_direction
-	Character. One of c('greater', 'less', 'two.sided'). The direction of the binomial test of proportions (default: 'greater').
-
-n_processors:
-	Numeric. The number of processors to use for parallel processing (default: 4).
-
-overwrite:
-	Logical. Whether to overwrite existing analysis output (default: TRUE).
-```

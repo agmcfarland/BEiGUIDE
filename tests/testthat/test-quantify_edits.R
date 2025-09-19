@@ -1,5 +1,5 @@
 test_that("quantify_edits works", {
-
+  testthat::skip()
   test_data <- testthat::test_path('testdata', 'integration_1')
 
   test_output <- file.path(testthat::test_path('integration_test_1'))

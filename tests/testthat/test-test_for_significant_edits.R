@@ -1,84 +1,28 @@
-test_that("test_for_significant_edits works", {
-
-  # Assuming plus strand, dataset has significant on target edit for position 2. Off-target edit at position 3
-  df_test <- rbind(
-    data.frame(
-      'position' = 1,
-      'base' = c('A', 'G'),
-      'base_count' = c(900, 20),
-      'position_depth' = 1000,
-      'reference_base' = 'A'),
-    data.frame(
-      'position' = 2,
-      'base' = c('A', 'G'),
-      'base_count' = c(500, 450),
-      'position_depth' = 1000,
-      'reference_base' = 'A'
-      ),
-    data.frame(
-      'position' = 3,
-      'base' = c('G', 'A'),
-      'base_count' = c(500, 450),
-      'position_depth' = 1000,
-      'reference_base' = 'G'
-      )
+testthat::test_that("test_for_significant_edits correctly filters and flags edits", {
+  df <- data.frame(
+    position = 1:4,
+    base = c('G', 'A', 'T', 'C'),
+    reference_base = c('A', 'A', 'T', 'C'),
+    position_depth = c(20, 20, 20, 20),
+    base_count = c(10, 2, 1, 1),
+    p_value = c(0.01, 0.2, 0.5, 0.001),
+    conf_low = c(0.2, 0.01, 0.0, 0.0),
+    conf_high = c(0.8, 0.3, 0.1, 0.1),
+    percentage = c(50, 10, 5, 5),
+    stringsAsFactors = FALSE
   )
 
-  df_test <- df_test %>%
-    dplyr::mutate(percentage = 100 * (base_count/position_depth)) %>%
-    dplyr::mutate(
-      specimen = 'spm1',
-      edit_site_target.seq = 'seq1',
-      edit.site = 'chr1:+:1',
-      edit_site_strand = '+'
-    )
+  # Positive strand test
+  result_pos <- test_for_significant_edits(df)
+  testthat::expect_true(all(c("all", "significant") %in% names(result_pos)))
 
-  df_results <- binomial_prop_edit_test(df_test, 0.05, 'greater')
+  # All output should not include bases matching the reference
+  testthat::expect_true(all(result_pos$all$base != result_pos$all$reference_base))
 
-  dfx <- test_for_significant_edits(df_results, editable_base = 'A', expected_edit = 'G')
+  # On-target flag is correct (A→G)
+  testthat::expect_true(any(result_pos$all$on_target_edit))
 
-  testthat::expect_equal(dfx %>% dplyr::filter(base_editing_result == 'on_target') %>% nrow(), 1)
-  testthat::expect_equal(dfx %>% dplyr::filter(base_editing_result == 'off_target') %>% nrow(), 1)
-
-  ## Repeat same test but for minus strand
-  df_test <- rbind(
-    data.frame(
-      'position' = 1,
-      'base' = c('T', 'C'),
-      'base_count' = c(900, 20),
-      'position_depth' = 1000,
-      'reference_base' = 'T'),
-    data.frame(
-      'position' = 2,
-      'base' = c('T', 'C'),
-      'base_count' = c(500, 450),
-      'position_depth' = 1000,
-      'reference_base' = 'T'
-    ),
-    data.frame(
-      'position' = 3,
-      'base' = c('C', 'T'),
-      'base_count' = c(500, 450),
-      'position_depth' = 1000,
-      'reference_base' = 'C'
-    )
-  )
-
-  df_test <- df_test %>%
-    dplyr::mutate(percentage = 100 * (base_count/position_depth)) %>%
-    dplyr::mutate(
-      specimen = 'spm1',
-      edit_site_target.seq = 'seq1',
-      edit.site = 'chr1:+:1',
-      edit_site_strand = '-'
-    )
-
-  df_results <- binomial_prop_edit_test(df_test, 0.05, 'greater')
-
-  dfx <- test_for_significant_edits(df_results, editable_base = 'A', expected_edit = 'G')
-
-  testthat::expect_equal(dfx %>% dplyr::filter(base_editing_result == 'on_target') %>% nrow(), 1)
-  testthat::expect_equal(dfx %>% dplyr::filter(base_editing_result == 'off_target') %>% nrow(), 1)
-
+  # Significant should only have p_value <= 0.05
+  testthat::expect_true(all(result_pos$significant$p_value <= 0.05))
 
 })

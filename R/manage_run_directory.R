@@ -16,8 +16,10 @@
 #' manage_run_directory(run_params)
 #' }
 manage_run_directory <- function(run_params) {
+  # browser()
   if (!dir.exists(run_params$output_directory)) {
-    stop(paste0('directory does not exist: ', run_params$output_directory))
+    dir.create(run_params$output_directory, recursive = TRUE)
+    print(paste0('making base output directory: ', run_params$output_directory))
   }
 
   if (dir.exists(run_params$analysis_output)) {
@@ -29,6 +31,7 @@ manage_run_directory <- function(run_params) {
   }
 
   if (!dir.exists(run_params$analysis_output)) {
+    print(paste0('making analysis output directory: ', run_params$output_directory))
     dir.create(run_params$analysis_output)
   }
   }
