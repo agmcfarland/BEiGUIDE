@@ -269,7 +269,7 @@ quantify_edits <- function(
       bases = edit_site$genomic_reference$reference_base
     )
 
-    saveRDS(edit_site, file.path(run_params$analysis_output, 'edit_sites', paste0('edit_site_id_', edit_site$description$unique_edit_site_id)))
+    saveRDS(edit_site, file.path(run_params$analysis_output, 'edit_sites', paste0('edit_site_id_', edit_site$description$unique_edit_site_id, '.rds')))
 
   }
 

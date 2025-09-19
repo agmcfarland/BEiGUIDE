@@ -48,7 +48,7 @@ quantify_edits_analysis <- function(quantify_edits_output_path) {
   df_base_edits <- data.frame()
   for (edit_site_row in split(df_edit_sites_pass_abundance, 1:nrow(df_edit_sites_pass_abundance))) {#break}
 
-    edit_site_data <- file.path(run_params$analysis_output, 'edit_sites', paste0('edit_site_id_', edit_site_row$unique_edit_site_id))
+    edit_site_data <- file.path(run_params$analysis_output, 'edit_sites', paste0('edit_site_id_', edit_site_row$unique_edit_site_id, '.rds'))
 
     if (file.exists(edit_site_data)) {
       edit_site <- readRDS(edit_site_data)

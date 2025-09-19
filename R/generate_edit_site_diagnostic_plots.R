@@ -50,6 +50,9 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
   base_plot_colors <- c("#4285F4", "#34A853", "#FBBC05", "#EA4335", 'lightgrey')
   names(base_plot_colors) <- base_order
 
+  color_plot_values <- c('#984EA3', 'orange', 'green', 'transparent')
+  names(color_plot_values) <- c('expected_base', 'on_target_edit', 'off_target_edit', 'other')
+
   df_standardized_locus <- edit_site$standardized_locus %>%
     dplyr::arrange(relative_position) %>%
     dplyr::mutate(genomic_position = factor(genomic_position, levels = genomic_position))
@@ -77,13 +80,13 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
         base == reference_base ~ 'expected_base',
         TRUE ~ 'other'
       ),
+      expected_edit = factor(expected_edit, levels = names(color_plot_values)),
       base = factor(base, levels = base_order)
     )
 
   cut_site_position <- factor(edit_site$description$position, levels = df_standardized_locus$genomic_position)
 
-  color_plot_values <- c('#984EA3', 'orange', 'green', 'transparent')
-  names(color_plot_values) <- c('expected_base', 'on_target_edit', 'off_target_edit', 'other')
+
   color_plot_values <- color_plot_values[names(color_plot_values) %in% base::unique(df_base_composition$expected_edit)]
 
   x_axis_plot_name <- df_standardized_locus$genomic_position
@@ -135,6 +138,8 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
       )
     ) +
     labs(title = plot_title, subtitle = plot_subtitle)
+
+  p1
 
 
   # diagnostic plot 2
