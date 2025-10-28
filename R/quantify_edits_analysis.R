@@ -91,6 +91,9 @@ quantify_edits_analysis <- function(quantify_edits_output_path) {
     )
   }
 
+  df_base_edits <- df_base_edits %>%
+    dplyr::distinct()
+
   df_base_edits_extended <- df_base_edits %>%
     dplyr::rename(
       base_edit_position = position
