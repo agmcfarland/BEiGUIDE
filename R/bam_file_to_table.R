@@ -6,9 +6,9 @@
 #' @param scan_param_what_list A character vector specifying the scan parameters.
 #'
 #' @return A data frame containing information from the BAM file.
-#' 
+#'
 #' @import Rsamtools dplyr
-#' 
+#'
 #' @export
 bam_file_to_table <- function(bam_file, scan_param_what_list = c('qname', 'rname', 'strand', 'pos', 'qwidth', 'seq', 'cigar', 'flag')) {
 

@@ -11,24 +11,19 @@
 #' @import parallel
 #' 
 #' @export
-parallel_bam_file_list_to_table <- function(bam_file_list, scan_param_what_list = c('qname', 'rname', 'strand', 'pos', 'qwidth', 'seq', 'cigar', 'flag'), number_of_cpu = 4) {
-
-  cl <- parallel::makeCluster(number_of_cpu)
-
-  parallel::clusterExport(cl, c('scan_param_what_list'), envir = environment())
-
-  df_bam <- do.call(
-    rbind,
-    parallel::mclapply(
-      bam_file_list,
-      function(bam_file) {
-        bam_file_to_table(bam_file, scan_param_what_list)
-      },
-      mc.cores = number_of_cpu
-    )
+parallel_bam_file_list_to_table <- function(bam_file_list, 
+                                           scan_param_what_list = c('qname', 'rname', 'strand', 'pos', 'qwidth', 'seq', 'cigar', 'flag'), 
+                                           number_of_cpu = 4) {
+  results_list <- parallel::mclapply(
+    bam_file_list,
+    function(bam_file) {
+      bam_file_to_table(bam_file, scan_param_what_list)
+    },
+    mc.cores = number_of_cpu
   )
 
-  parallel::stopCluster(cl)
+  df_bam <- do.call(rbind, results_list)
+
 
   df_bam$specimen_id <- stringr::str_extract(df_bam$bam_id, "^[^-]+")
 

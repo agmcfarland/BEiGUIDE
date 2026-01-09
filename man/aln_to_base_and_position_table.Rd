@@ -4,7 +4,7 @@
 \alias{aln_to_base_and_position_table}
 \title{Alignment to Base and Position Table}
 \usage{
-aln_to_base_and_position_table(aln)
+aln_to_base_and_position_table(df_bam_filtered)
 }
 \arguments{
 \item{aln}{A single row data frame.}
@@ -13,7 +13,7 @@ aln_to_base_and_position_table(aln)
 A data frame with base, position, and qname.
 }
 \description{
-Takes a single row produced by filter_bam_alignments and returns a table with base, position, and qname.
+Takes row produced by filter_bam_alignments and returns a table with base, position, and qname.
 }
 \details{
 input is a single row produced by filter_bam_alignments

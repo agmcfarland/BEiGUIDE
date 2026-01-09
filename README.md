@@ -35,7 +35,7 @@ BEiGUIDE::quantify_edits(
   overwrite = FALSE
 )
 
-BEiGUIDE::quantify_edits_analysus(
+BEiGUIDE::quantify_edits_analysis(
 	quantify_edits_output_path = '/path/to/quantify_edits/output'
 	)
 ```
@@ -60,6 +60,12 @@ BEiGUIDE::quantify_edits_analysus(
 | n_processors | Numeric | Number of CPU cores to use for parallel processing | 4 |
 | overwrite | Logical | Whether to overwrite existing analysis output | TRUE |
 
+
+# Notes
+
+`n_processesors` controls how many BAM files to load into memory when combining them prior to removing unneeded information, this can cause RAM usage to explode. If a run fails due to memory, lower this. 
+
+Edit sites are processed automatically with n-1 cores. Should not use more than a Gb of memory.
 
 # Future additions
 

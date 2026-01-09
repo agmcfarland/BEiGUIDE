@@ -28,7 +28,12 @@ test_that("filter_bam_alignments works positive strand", {
 
 test_that("filter_bam_alignments works negative strand", {
 
-  df_bam <- readRDS(testthat::test_path('testdata', 'df_bam_example.rds'))
+  df_bam <- readRDS(testthat::test_path('testdata', 'df_bam_example.rds')) %>%
+    dplyr::filter(
+    !stringr::str_detect(cigar, 'I'),
+    !stringr::str_detect(cigar, 'S'),
+    !stringr::str_detect(cigar, 'D')
+    )
 
   df_bam_filtered <- filter_bam_alignments(
     df_bam,

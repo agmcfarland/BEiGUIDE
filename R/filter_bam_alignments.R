@@ -34,9 +34,8 @@ filter_bam_alignments <- function(df_bam, specimen, chromosome, edit_site_positi
   df_bam_filtered <- df_bam %>%
     dplyr::filter(
       specimen_id == specimen,
-      rname == chromosome,
-      !stringr::str_detect(cigar, 'S'),
-      !stringr::str_detect(cigar, 'D'))
+      rname == chromosome
+      )
 
   if (edit_site_strand == '-') {
     df_bam_filtered <- df_bam_filtered %>%
