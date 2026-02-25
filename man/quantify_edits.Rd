@@ -19,6 +19,7 @@ quantify_edits(
   binomial_p_value_threshold = 0.05,
   binomial_direction = "greater",
   n_processors = 4,
+  n_edit_site_processors = 3,
   overwrite = TRUE
 )
 }
@@ -49,7 +50,9 @@ quantify_edits(
 
 \item{binomial_direction}{Character. Direction of the binomial test: \code{'greater'}, \code{'less'}, or \code{'two-sided'} (default: \code{'greater'}).}
 
-\item{n_processors}{Numeric. Number of CPU cores to use for parallel processing (default: \code{4}).}
+\item{n_processors}{Numeric. Number of CPU cores to use for parallel processing of BAM files (default: \code{4}).}
+
+\item{n_edit_site_processors}{Numeric. Number of CPU cores to use for parallel processing of edit sites with significant levels of base editing.}
 
 \item{overwrite}{Logical. Whether to overwrite existing analysis output (default: \code{TRUE}).}
 }
@@ -89,6 +92,7 @@ quantify_edits(
   binomial_p_value_threshold = 0.01,
   binomial_direction = "two-sided",
   n_processors = 6,
+  n_edit_site_processors = 3,
   overwrite = FALSE
 )
 }

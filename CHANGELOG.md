@@ -1,3 +1,8 @@
+# 1.6.1
+
+* `quantify_edits` had a new parameter `n_edit_site_processors` added. This controls how many processors are used when running `characterize_edit_site()`.
+
+* `df_bam`, `run_params`, and `genome` sequence are assigned as global variables to be used by `mclapply()` when running `characterize_edit_site()`. 
 
 # 1.6
 

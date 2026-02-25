@@ -22,7 +22,8 @@
 #' @param expected_edit Character. The expected base after editing (default: `'G'`).
 #' @param binomial_p_value_threshold Numeric. P-value threshold for determining significance using a binomial test (default: `0.05`).
 #' @param binomial_direction Character. Direction of the binomial test: `'greater'`, `'less'`, or `'two-sided'` (default: `'greater'`).
-#' @param n_processors Numeric. Number of CPU cores to use for parallel processing (default: `4`).
+#' @param n_processors Numeric. Number of CPU cores to use for parallel processing of BAM files (default: `4`).
+#' @param n_edit_site_processors Numeric. Number of CPU cores to use for parallel processing of edit sites with significant levels of base editing.
 #' @param overwrite Logical. Whether to overwrite existing analysis output (default: `TRUE`).
 #'
 #' @return This function does not return an object. It writes the following to `output_directory/analysis_name`:
@@ -52,6 +53,7 @@
 #'   binomial_p_value_threshold = 0.01,
 #'   binomial_direction = "two-sided",
 #'   n_processors = 6,
+#'   n_edit_site_processors = 3,
 #'   overwrite = FALSE
 #' )
 #' }
@@ -72,6 +74,7 @@ quantify_edits <- function(
 		binomial_p_value_threshold = 0.05,
 		binomial_direction = 'greater',
 		n_processors = 4,
+		n_edit_site_processors = 3,
 		overwrite = TRUE
 ) {
 
@@ -93,6 +96,7 @@ quantify_edits <- function(
   	'binomial_p_value_threshold' = binomial_p_value_threshold,
   	'binomial_direction' = binomial_direction,
   	'n_processors' = n_processors,
+  	'n_edit_site_processors' = n_edit_site_processors,
   	'overwrite' = overwrite
   )
 
@@ -173,12 +177,16 @@ quantify_edits <- function(
   	1:nrow(df_edit_sites_pass_abundance)
   )
 
-  logr::log_print(paste("Starting parallel characterization of", length(edit_site_list), "sites using", parallel::detectCores()-1, "cores."))
+  base::assign("df_bam", df_bam, envir = .GlobalEnv)
+  base::assign("run_params", run_params, envir = .GlobalEnv)
+  base::assign("genome_sequence", genome_sequence, envir = .GlobalEnv)
+
+  logr::log_print(paste("Starting parallel characterization of", length(edit_site_list), "sites using", run_params$n_edit_site_processors, "cores."))
 
 	results <- parallel::mclapply(
 		edit_site_list,
 		characterize_edit_site,
-		mc.cores = parallel::detectCores()-1
+		mc.cores = run_params$n_edit_site_processors
 	)
 
 	logr::log_print('Finished')
