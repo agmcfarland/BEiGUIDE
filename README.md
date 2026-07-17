@@ -70,10 +70,10 @@ BEiGUIDE::quantify_edits_analysis(
 | `output_directory` | Character | Directory where results will be written | **Required** |
 | `analysis_name` | Character | Name of analysis output directory | `"quantify_edits"` |
 | `abundance_cutoff` | Numeric | Minimum read count required for an edit site | `3` |
-| `expected_PAM_proximal_cut_distance` | Numeric | Expected PAM-proximal cut distance | `3` |
+| `expected_PAM_proximal_cut_distance` | Numeric | Expected PAM-proximal cut distance to PAM | `3` |
 | `expected_PAM_distal_cut_distance` | Numeric | Maximum PAM-distal distance examined | `17` |
-| `allowed_aln_start_cut_site_PAM_distal` | Numeric | Allowed alignment start within the protospacer | `3` |
-| `allowed_aln_start_cut_site_PAM_proximal` | Numeric | Allowed alignment start outside the protospacer | `3` |
+| `allowed_aln_start_cut_site_PAM_distal` | Numeric | Cut site in alignment data can start within these amounts of basepairs PAM distal of cut site  | `3` |
+| `allowed_aln_start_cut_site_PAM_proximal` | Numeric | Cut site in alignment data can start within these amounts of basepairs PAM proximal of cut site | `3` |
 | `reference_genome_path` | Character | FASTA reference genome used to retrieve reference sequence | `""` |
 | `editable_base` | Character | Base expected to undergo editing | `"A"` |
 | `expected_edit` | Character | Expected edited base | `"G"` |
