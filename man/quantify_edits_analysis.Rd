@@ -4,12 +4,17 @@
 \alias{quantify_edits_analysis}
 \title{Quantify and Summarize Base Edits from a BEiGUIDE Run}
 \usage{
-quantify_edits_analysis(quantify_edits_output_path)
+quantify_edits_analysis(
+  quantify_edits_output_path,
+  percentage_display_cutoff = 2
+)
 }
 \arguments{
-\item{quantify_edits_output_path}{Character string. Path to the \code{quantify_edits} output directory
+\item{quantify_edits_output_path}{Character. Path to the \code{quantify_edits} output directory
 from a BEiGUIDE run. This directory should contain the files
 \code{run_parameters.rds} and \code{edit_sites_overview.rds}.}
+
+\item{percentage_display_cutoff}{Numeric. The minimum percentage to be displayed visually. (default: 2).}
 }
 \value{
 This function is used for its side effects:

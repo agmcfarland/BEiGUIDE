@@ -16,7 +16,7 @@
 #' manage_run_directory(run_params)
 #' }
 manage_run_directory <- function(run_params) {
-  # browser()
+  
   if (!dir.exists(run_params$output_directory)) {
     dir.create(run_params$output_directory, recursive = TRUE)
     print(paste0('making base output directory: ', run_params$output_directory))

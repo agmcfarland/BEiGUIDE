@@ -6,48 +6,25 @@
 \usage{
 binomial_prop_edit_test(
   df_base_counts,
-  p_value_threshold = 0.05,
-  alternative_ = c("two.sided", "less", "greater")
+  null_proportion = 0.001,
+  alternative_ = c("greater", "two.sided", "less")
 )
 }
 \arguments{
-\item{df_base_counts}{A data frame containing base counts and coverage depth for each position.
-It must include the columns:
-\itemize{
-\item \code{position} — Genomic position (numeric or integer).
-\item \code{base} — Base identity as a character (A, C, G, T, or N).
-\item \code{base_count} — Number of reads supporting that base.
-\item \code{position_depth} — Total read depth at that position.
-}}
+\item{df_base_counts}{A data frame containing columns: \code{position}, \code{base},
+\code{base_count}, and \code{position_depth}.}
 
-\item{p_value_threshold}{A numeric value specifying the expected proportion under the null
-hypothesis (default is 0.05).}
+\item{null_proportion}{Numeric. The expected background/error rate under the
+null hypothesis (default: \code{0.001}).}
 
-\item{alternative_}{A character string specifying the alternative hypothesis to test.
-One of \code{"two.sided"}, \code{"less"}, or \code{"greater"}. Default is \code{"two.sided"}.}
+\item{alternative_}{One of \code{"greater"}, \code{"two.sided"}, or \code{"less"}. Default is \code{"greater"}.}
 }
 \value{
-A data frame with the following columns:
-\itemize{
-\item \code{position} — The genomic position tested.
-\item \code{base} — The base tested.
-\item \code{base_count} — Number of reads supporting that base.
-\item \code{position_depth} — Total depth at that position.
-\item \code{p_value} — The p-value from the binomial test.
-\item \code{conf_low} — Lower bound of the binomial confidence interval.
-\item \code{conf_high} — Upper bound of the binomial confidence interval.
-\item \code{percentage} — Percentage of reads supporting the base (0–100).
-}
+A data frame containing the tested positions, bases, counts, depths,
+binomial p-values, confidence intervals, and percentages.
 }
 \description{
 Performs a binomial test for each base at each genomic position to assess whether
 the observed base count is significantly different from an expected baseline
-proportion (default 5\%). For each base, this function reports the p-value and
-confidence interval from the binomial test, along with the percentage of reads
-supporting that base.
-}
-\details{
-If any of the bases A, C, G, T, or N are missing from the input at a given position,
-they are added with a count of 0 before testing. The binomial test is run using
-\code{stats::binom.test} on each base at each position.
+proportion (default 0.1\%).
 }

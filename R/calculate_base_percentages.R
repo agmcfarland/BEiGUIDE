@@ -1,32 +1,25 @@
 #' Calculate Base Percentages
 #'
-#' Uses input from `parallel_aln_to_base_and_position_tables()` or `aln_to_base_and_position_tables()`  and returns a table with counts and percentages of each base at each position.
+#' Uses input from or `aln_to_base_and_position_tables()`  and returns a table with counts and percentages of each base at each position.
 #'
-#' @param df_aln_pos A data frame with base, position, and qname.
-#' @param edit_site_position The position of the edit site.
-#' @param edit_site_strand The strand of the edit site ('+' or '-').
-#' @param bases_from_cut_site Number of bases to consider from the cut site.
+#' @param df_aln_pos A data frame with base, position, and qname. Must already be sorted down to the chromosome level to be used here.
+#' @param start Start minimum position. Desired positions must be greater than this value.
+#' @param stop Stop minimum position. Desired positions must be less than this value.
+#'
+#' @details `Start` must be less than `stop.` Use `cut_site_protospacer_coords()` and `protospacer_coords_to_absolute_start_stop_coords()` to calculate `start` and `stop` if desired.
 #'
 #' @return A data frame with counts and percentages of each base at each position. The number of aligned reads (depth) for each position is also reported.
 #'
 #' @export
 #'
 #' @import dplyr
-calculate_base_percentages <- function(df_aln_pos, edit_site_position, edit_site_strand, bases_from_cut_site = 20) {
+calculate_base_percentages <- function(df_aln_pos, start, stop) {
 
-  if (edit_site_strand == '+') {
-    df_aln_pos_filtered <- df_aln_pos %>%
-      dplyr::filter(
-        position >= edit_site_position - bases_from_cut_site & position <= edit_site_position ) # gRNA extends to the left of the cut site
-  }
+  testthat::expect_true(start < stop)
 
-  if (edit_site_strand == '-') {
-    df_aln_pos_filtered <- df_aln_pos %>%
-      dplyr::filter(
-        position <= edit_site_position + bases_from_cut_site & position >= edit_site_position) # gRNA extends to the right of the cut site
-  }
-
-  df_aln_pos_filtered <- df_aln_pos_filtered %>%
+  df_aln_pos_filtered <- df_aln_pos %>%
+    dplyr::filter(
+      position >= start & position <= stop) %>%
     dplyr::group_by(position, base) %>%
     dplyr::mutate(base_count = dplyr::n()) %>%
     dplyr::ungroup() %>%

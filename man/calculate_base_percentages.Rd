@@ -4,25 +4,21 @@
 \alias{calculate_base_percentages}
 \title{Calculate Base Percentages}
 \usage{
-calculate_base_percentages(
-  df_aln_pos,
-  edit_site_position,
-  edit_site_strand,
-  bases_from_cut_site = 20
-)
+calculate_base_percentages(df_aln_pos, start, stop)
 }
 \arguments{
-\item{df_aln_pos}{A data frame with base, position, and qname.}
+\item{df_aln_pos}{A data frame with base, position, and qname. Must already be sorted down to the chromosome level to be used here.}
 
-\item{edit_site_position}{The position of the edit site.}
+\item{start}{Start minimum position. Desired positions must be greater than this value.}
 
-\item{edit_site_strand}{The strand of the edit site ('+' or '-').}
-
-\item{bases_from_cut_site}{Number of bases to consider from the cut site.}
+\item{stop}{Stop minimum position. Desired positions must be less than this value.}
 }
 \value{
 A data frame with counts and percentages of each base at each position. The number of aligned reads (depth) for each position is also reported.
 }
 \description{
-Uses input from \code{parallel_aln_to_base_and_position_tables()} or \code{aln_to_base_and_position_tables()}  and returns a table with counts and percentages of each base at each position.
+Uses input from or \code{aln_to_base_and_position_tables()}  and returns a table with counts and percentages of each base at each position.
+}
+\details{
+\code{Start} must be less than \code{stop.} Use \code{cut_site_protospacer_coords()} and \code{protospacer_coords_to_absolute_start_stop_coords()} to calculate \code{start} and \code{stop} if desired.
 }

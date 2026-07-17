@@ -21,7 +21,7 @@
 # }
 
 aln_to_base_and_position_table <- function(df_bam_filtered) {
-  # Convert to data.table for speed
+  # Make data.table object
   df_bam_filtered <- data.table::as.data.table(df_bam_filtered)
 
   results <- base::lapply(1:nrow(df_bam_filtered), function(idx) {
@@ -29,16 +29,11 @@ aln_to_base_and_position_table <- function(df_bam_filtered) {
     # Extract the single row
     df_idx_chunk <- df_bam_filtered[idx, ]
 
-    # FIX 1: Ensure seq is character. strsplit fails on factors/S4 objects.
     seq_char <- base::as.character(df_idx_chunk$seq)
     base_lists <- base::strsplit(seq_char, "", fixed = TRUE)[[1]]
 
-    # Compute length for this specific read
+    # Compute length for specific read
     len <- df_idx_chunk$qwidth
-
-    # FIX 2: Since we are processing row-by-row in lapply,
-    # we don't need the internal 'for' loop or 'starts/ends' logic.
-    # We can create the data.table directly.
 
     data.table::data.table(
       base = base_lists,

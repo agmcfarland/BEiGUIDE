@@ -4,7 +4,11 @@
 \alias{generate_edit_site_diagnostic_plots}
 \title{Generate diagnostic plots for an edit site}
 \usage{
-generate_edit_site_diagnostic_plots(edit_site)
+generate_edit_site_diagnostic_plots(
+  edit_site,
+  percentage_display_cutoff = 2,
+  print_plots = TRUE
+)
 }
 \arguments{
 \item{edit_site}{A named list containing:
@@ -16,8 +20,12 @@ generate_edit_site_diagnostic_plots(edit_site)
 \item{base_composition}{A data frame describing observed base composition at each genomic position,
 including \code{position}, \code{base}, \code{percentage}, and \code{position_depth}}
 \item{significant_edits}{A list containing a data frame \code{significant} with columns
-\code{position}, \code{base}, \code{p_value}, and \code{on_target_edit}}
+\code{position}, \code{base}, \code{adj_adj_p_value}, and \code{on_target_edit}}
 }}
+
+\item{percentage_display_cutoff}{Numeric. The minimum percentage to be displayed visually. (default: 2).}
+
+\item{print_plots}{Boolean. Print diagnostic plots. (default: TRUE).}
 }
 \value{
 A named list of four \code{ggplot} objects:

@@ -1,3 +1,20 @@
+# 2.0.0
+
+* Updated Functions and workflow will break prior scripts using BEiGUIDE
+
+* Renamed function inputs for clarity, readibilty, and consistency
+
+* Better adjustment to 1-based indexing
+
+* Record when a site passes abundance filtering but does not have any dsODN integrations (aln pos start) within the allowed break window
+
+* Protospacer standardization cleaned up
+
+* New functions for genomic location to relative protospacer location calculation
+
+* Adjusted p value filtering
+
+
 # 1.6.1
 
 * `quantify_edits` had a new parameter `n_edit_site_processors` added. This controls how many processors are used when running `characterize_edit_site()`.

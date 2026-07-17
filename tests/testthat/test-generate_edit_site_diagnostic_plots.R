@@ -5,9 +5,12 @@ test_that("test_diagnostic_plots", {
 
     edit_site <- readRDS(testthat::test_path('testdata', 'example_output_1', 'edit_sites', paste0('edit_site_id_', edit_site_id)))
 
-    plot_results <- generate_edit_site_diagnostic_plots(edit_site = edit_site)
+    edit_site$significant_edits$significant$adj_p_value <- 0.01
 
-    testthat::expect_equal(length(names(plot_results)), 4)
+
+    plot_results <- generate_edit_site_diagnostic_plots(edit_site = edit_site, print = F)
+
+    testthat::expect_equal(length(names(plot_results)), 6)
 
   }
 

@@ -16,9 +16,10 @@
 #'         by annotation, and saves it as CSV and RDS.
 #' }
 #'
-#' @param quantify_edits_output_path Character string. Path to the `quantify_edits` output directory
+#' @param quantify_edits_output_path Character. Path to the `quantify_edits` output directory
 #'   from a BEiGUIDE run. This directory should contain the files
 #'   `run_parameters.rds` and `edit_sites_overview.rds`.
+#' @param percentage_display_cutoff Numeric. The minimum percentage to be displayed visually. (default: 2).
 #'
 #' @return This function is used for its side effects:
 #'   \itemize{
@@ -34,7 +35,7 @@
 #' \dontrun{
 #' quantify_edits_analysis('/path/to/quantify_edits')
 #' }
-quantify_edits_analysis <- function(quantify_edits_output_path) {
+quantify_edits_analysis <- function(quantify_edits_output_path, percentage_display_cutoff = 2) {
 
   # quantify_edits_output_path = '/data/BEiGUIDE/tests/quantify_edits'
 
@@ -45,16 +46,32 @@ quantify_edits_analysis <- function(quantify_edits_output_path) {
   df_edit_sites_pass_abundance <- df_edit_sites %>%
     dplyr::filter(pass_abundance_filter == T)
 
+  # record whether abundance filter passing sites did or did not have data availble to them
+  df_sites_with_data <- data.frame()
+
   df_base_edits <- data.frame()
-  for (edit_site_row in split(df_edit_sites_pass_abundance, 1:nrow(df_edit_sites_pass_abundance))) {#break}
+  for (edit_site_row in split(df_edit_sites_pass_abundance, 1:nrow(df_edit_sites_pass_abundance))) {
 
     edit_site_data <- file.path(run_params$analysis_output, 'edit_sites', paste0('edit_site_id_', edit_site_row$unique_edit_site_id, '.rds'))
 
     if (file.exists(edit_site_data)) {
       edit_site <- readRDS(edit_site_data)
+
+      if ('fail' %in% names(edit_site)) {
+        df_sites_with_data <- rbind(
+          df_sites_with_data,
+          data.frame(
+            'unique_edit_site_id' = edit_site$description$unique_edit_site_id,
+            'fail_reason' =  edit_site$fail
+          )
+        )
+        next # skip processing after recording failure
+      }
+    } else {
+      next # skip if file doesn't exist
     }
 
-    plot_results <- generate_edit_site_diagnostic_plots(edit_site)
+    plot_results <- generate_edit_site_diagnostic_plots(edit_site, percentage_display_cutoff = percentage_display_cutoff, print_plots = F)
 
     ggsave(
       file.path(run_params$analysis_output, 'plots', paste0('heatmap_edit_site_', edit_site$description$unique_edit_site_id, '.pdf')),
@@ -89,6 +106,7 @@ quantify_edits_analysis <- function(quantify_edits_output_path) {
       edit_site$significant_edits$significant %>%
         dplyr::mutate(unique_edit_site_id = edit_site$description$unique_edit_site_id)
     )
+
   }
 
   df_base_edits <- df_base_edits %>%
@@ -144,6 +162,10 @@ quantify_edits_analysis <- function(quantify_edits_output_path) {
 
   write.csv(df_overview_summarized, file.path(run_params$analysis_output, 'run_base_edit_summary.csv'), row.names = F)
   saveRDS(df_overview_summarized, file.path(run_params$analysis_output, 'run_base_edit_summary.rds'))
+
+
+  write.csv(df_sites_with_data, file.path(run_params$analysis_output, 'edit_site_fail.csv'), row.names = F)
+  saveRDS(df_sites_with_data, file.path(run_params$analysis_output, 'edit_site_fail.rds'))
 
 
   }

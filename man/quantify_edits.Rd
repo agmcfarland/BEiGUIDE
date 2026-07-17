@@ -9,15 +9,17 @@ quantify_edits(
   output_directory,
   analysis_name = "quantify_edits",
   abundance_cutoff = 3,
-  expected_cut_distance_from_pam = 3,
-  end_distance_from_cut_site = 20,
-  cut_site_start_distance_within_gRNA = 3,
-  cut_site_start_distance_outside_gRNA = 3,
+  expected_PAM_proximal_cut_distance = 3,
+  expected_PAM_distal_cut_distance = 17,
+  allowed_aln_start_cut_site_PAM_distal = 3,
+  allowed_aln_start_cut_site_PAM_proximal = 3,
   reference_genome_path = "",
   editable_base = "A",
   expected_edit = "G",
+  null_proportion = 0.001,
   binomial_p_value_threshold = 0.05,
-  binomial_direction = "greater",
+  binomial_direction = c("greater", "less", "two.sided"),
+  p_value_adj_method = "BH",
   n_processors = 4,
   n_edit_site_processors = 3,
   overwrite = TRUE
@@ -32,13 +34,13 @@ quantify_edits(
 
 \item{abundance_cutoff}{Numeric. Minimum read count for including an edit site (default: \code{3}).}
 
-\item{expected_cut_distance_from_pam}{Numeric. Distance from PAM where the cut site is expected (default: \code{3}).}
+\item{expected_PAM_proximal_cut_distance}{Numeric. PAM proximal distance of cut site to start of PAM (default: \code{3}).}
 
-\item{end_distance_from_cut_site}{Numeric. Maximum distance from the cut site to consider bases (default: \code{20}).}
+\item{expected_PAM_distal_cut_distance}{Numeric. Maximum PAM-distal distance from the cut site to consider bases (default: \code{17}).}
 
-\item{cut_site_start_distance_within_gRNA}{Numeric. Distance within the gRNA to start considering cut sites (default: \code{3}).}
+\item{allowed_aln_start_cut_site_PAM_distal}{Numeric. Distance within the gRNA to start considering cut sites (default: \code{3}).}
 
-\item{cut_site_start_distance_outside_gRNA}{Numeric. Distance outside the gRNA to start considering cut sites (default: \code{3}).}
+\item{allowed_aln_start_cut_site_PAM_proximal}{Numeric. Distance outside the gRNA to start considering cut sites (default: \code{3}).}
 
 \item{reference_genome_path}{Character. Path to a FASTA file used to retrieve reference genome sequence (default: \code{''}).}
 
@@ -46,13 +48,17 @@ quantify_edits(
 
 \item{expected_edit}{Character. The expected base after editing (default: \code{'G'}).}
 
+\item{null_proportion}{Numeric. The expected background/error rate under the null hypothesis (default: \code{0.001}).}
+
 \item{binomial_p_value_threshold}{Numeric. P-value threshold for determining significance using a binomial test (default: \code{0.05}).}
 
 \item{binomial_direction}{Character. Direction of the binomial test: \code{'greater'}, \code{'less'}, or \code{'two-sided'} (default: \code{'greater'}).}
 
+\item{p_value_adj_method}{Character. Must match accepted method from p.adjust(). (default: \code{'BH'}).}
+
 \item{n_processors}{Numeric. Number of CPU cores to use for parallel processing of BAM files (default: \code{4}).}
 
-\item{n_edit_site_processors}{Numeric. Number of CPU cores to use for parallel processing of edit sites with significant levels of base editing.}
+\item{n_edit_site_processors}{Numeric. Number of CPU cores to use for parallel processing of edit sites with significant levels of base editing (default: \code{3}).}
 
 \item{overwrite}{Logical. Whether to overwrite existing analysis output (default: \code{TRUE}).}
 }
@@ -82,10 +88,10 @@ quantify_edits(
   output_directory = "path/to/output_directory",
   analysis_name = "my_analysis",
   abundance_cutoff = 5,
-  expected_cut_distance_from_pam = 3,
-  end_distance_from_cut_site = 25,
-  cut_site_start_distance_within_gRNA = 4,
-  cut_site_start_distance_outside_gRNA = 4,
+  expected_PAM_proximal_cut_distance = 3,
+  expected_PAM_distal_cut_distance = 17,
+  allowed_aln_start_cut_site_PAM_distal = 4,
+  allowed_aln_start_cut_site_PAM_proximal = 4,
   reference_genome_path = "path/to/genome.fasta",
   editable_base = "C",
   expected_edit = "T",

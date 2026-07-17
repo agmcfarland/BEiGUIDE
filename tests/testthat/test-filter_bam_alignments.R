@@ -10,8 +10,8 @@ test_that("filter_bam_alignments works positive strand", {
     chromosome = 'chr1',
     edit_site_position = 198706754,
     edit_site_strand = '+',
-    allowed_bases_within_gRNA = 3,
-    allowed_bases_outside_gRNA = 3
+    allowed_aln_start_cut_site_PAM_distal = 4,
+    allowed_aln_start_cut_site_PAM_proximal = 3
   )
 
   df_expected_bam_filtered <- readRDS(testthat::test_path('testdata', 'df_bam_filtered_example.rds'))
@@ -41,8 +41,8 @@ test_that("filter_bam_alignments works negative strand", {
     chromosome = 'chr2',
     edit_site_position = 143961596,
     edit_site_strand = '-',
-    allowed_bases_within_gRNA = 3,
-    allowed_bases_outside_gRNA = 3
+    allowed_aln_start_cut_site_PAM_distal = 4,
+    allowed_aln_start_cut_site_PAM_proximal = 3
   )
 
   testthat::expect_equal(base::unique(df_bam_filtered$edit_site_min < df_bam_filtered$edit_site_max), TRUE)

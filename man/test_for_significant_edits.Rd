@@ -8,7 +8,8 @@ test_for_significant_edits(
   df_edit_significance,
   editable_base = "A",
   expected_edit = "G",
-  pvalue_threshold = 0.05
+  pvalue_threshold = 0.05,
+  adj_method = "BH"
 )
 }
 \arguments{
@@ -22,48 +23,21 @@ test_for_significant_edits(
 \item{expected_edit}{A character indicating the expected edited base
 (default is \code{'G'}).}
 
-\item{pvalue_threshold}{Numeric. Significance threshold for p-values
+\item{pvalue_threshold}{Numeric. Significance threshold for adjusted p-values
 (default is \code{0.05}).}
 
-\item{strand}{A character (\code{'+'} or \code{'-'}) indicating the strand orientation.
-If \code{'-'}, the reference and observed bases will be reverse-complemented.}
+\item{adj_method}{A character specifying the p-value adjustment method passed to
+p.adjust() (default is \code{'BH'}).}
 }
 \value{
 A named list with two data frames:
 \describe{
-\item{\code{all}}{All non-reference base calls with on-target flag.}
-\item{\code{significant}}{Subset of \code{all} where \code{p_value} ≤ \code{pvalue_threshold}.}
+\item{\code{all}}{All non-reference base calls with on-target flag and adjusted p-values.}
+\item{\code{significant}}{Subset of \code{all} where \code{adj_p_value} <= \code{pvalue_threshold}.}
 }
 }
 \description{
-Given a data frame of per-base edit significance statistics, this function
-identifies edited bases that differ from the reference. If the strand is negative
-then the sequence of the strand is complemented. Edits (e.g. A→G) are detected relative to the 5'->3' orientation.
-Function will flags on-target and off-target edits where an on-target matches the editable base to expected edit
-while off target is any other combination where an observed base and reference base pair differ.
-Function returns both the full filtered data frame where each row is a base-reference base pair that are different
-and a filtered dataframe where edits have a p_value lower than the provided threshold.
-}
-\details{
-This function is useful for downstream filtering of base editing results.
-For negative-strand data, bases are converted to their complements before
-comparison to the reference.
-}
-\examples{
-\dontrun{
-df <- data.frame(
-  position = 1:3,
-  base = c('G', 'A', 'T'),
-  reference_base = c('A', 'A', 'T'),
-  position_depth = c(20, 20, 20),
-  base_count = c(10, 2, 1),
-  p_value = c(0.01, 0.2, 0.5),
-  conf_low = c(0.2, 0.01, 0.0),
-  conf_high = c(0.8, 0.3, 0.1),
-  percentage = c(50, 10, 5)
-)
-
-test_for_significant_edits(df, strand = '+')
-}
-
+Identifies edited bases that differ from the reference base. Filters out
+unedited bases, missing calls (N), and zero-count bases, calculates multiple-testing
+corrected p-values on the remaining edits, and flags on-target vs. off-target events.
 }

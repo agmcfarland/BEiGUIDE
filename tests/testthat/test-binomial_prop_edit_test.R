@@ -1,12 +1,12 @@
 testthat::test_that("binomial_prop_edit_test returns expected results", {
-  df <- data.frame(
+  dfx <- data.frame(
     position = c(1, 1, 1, 2, 2),
     base = c("A", "C", "G", "A", "T"),
-    base_count = c(10, 0, 5, 20, 0),
+    base_count = c(10, 1, 5, 20, 0),
     position_depth = c(15, 15, 15, 20, 20)
   )
 
-  result <- binomial_prop_edit_test(df, alternative_ = 'greater')
+  result <- binomial_prop_edit_test(dfx, alternative_ = 'greater')
 
   # Check structure
   testthat::expect_s3_class(result, "data.frame")
@@ -26,7 +26,7 @@ testthat::test_that("binomial_prop_edit_test returns expected results", {
 })
 
 testthat::test_that("binomial_prop_edit_test errors on invalid alternative_", {
-  df <- data.frame(
+  dfx <- data.frame(
     position = 1,
     base = "A",
     base_count = 10,
@@ -34,7 +34,7 @@ testthat::test_that("binomial_prop_edit_test errors on invalid alternative_", {
   )
 
   testthat::expect_error(
-    binomial_prop_edit_test(df, alternative_ = "invalid"),
-    "Specify one of two.sided, less, greater"
+    binomial_prop_edit_test(dfx, alternative_ = "invalid"),
+    "'arg' should be one of “greater”, “two.sided”, “less”"
   )
 })

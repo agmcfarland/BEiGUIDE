@@ -14,8 +14,10 @@
 #'   \item{base_composition}{A data frame describing observed base composition at each genomic position,
 #'     including \code{position}, \code{base}, \code{percentage}, and \code{position_depth}}
 #'   \item{significant_edits}{A list containing a data frame \code{significant} with columns
-#'     \code{position}, \code{base}, \code{p_value}, and \code{on_target_edit}}
+#'     \code{position}, \code{base}, \code{adj_adj_p_value}, and \code{on_target_edit}}
 #' }
+#' @param percentage_display_cutoff Numeric. The minimum percentage to be displayed visually. (default: 2).
+#' @param print_plots Boolean. Print diagnostic plots. (default: TRUE).
 #'
 #' @return A named list of four \code{ggplot} objects:
 #' \describe{
@@ -41,7 +43,7 @@
 #' @import ggplot2 dplyr
 #'
 #' @export
-generate_edit_site_diagnostic_plots <- function(edit_site) {
+generate_edit_site_diagnostic_plots <- function(edit_site, percentage_display_cutoff = 2, print_plots = TRUE) {
 
   plot_title <- as.character(edit_site$description$annotation)
   plot_subtitle <- paste0(edit_site$description$edit.site, ' ', edit_site$description$gene_id, ' sgRNA: ', edit_site$description$target.seq, ' abund: ', edit_site$description$abund)
@@ -60,19 +62,19 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
   df_base_composition <- edit_site$base_composition %>%
     dplyr::left_join(
       edit_site$significant_edits$significant %>%
-        dplyr::select(position, base, p_value, on_target_edit),
+        dplyr::select(position, base, adj_p_value, on_target_edit),
       by = c('position', 'base')
     ) %>%
     dplyr::mutate(
       genomic_position = factor(position, levels = df_standardized_locus$genomic_position),
-      percentage_fill = ifelse(percentage > 5, paste(round(percentage, 1)), NA_real_),
-      signifiance = dplyr::case_when(
-        p_value < 0.001 ~ '***',
-        p_value < 0.01 ~ '**',
-        p_value < 0.05 ~ '*',
+      percentage_fill = ifelse(percentage > percentage_display_cutoff, paste(round(percentage, 1)), NA_real_),
+      significance = dplyr::case_when(
+        adj_p_value < 0.001 ~ '***',
+        adj_p_value < 0.01 ~ '**',
+        adj_p_value < 0.05 ~ '*',
         TRUE ~ NA_character_
       ),
-      percentage_significance_fill = paste0(percentage_fill, '\n', signifiance),
+      percentage_significance_fill = paste0(percentage_fill, '\n', significance),
       percentage_significance_fill = stringr::str_replace_all(percentage_significance_fill, 'NA', ''),
       expected_edit = dplyr::case_when(
         (on_target_edit == TRUE) ~ 'on_target_edit',
@@ -139,8 +141,6 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
     ) +
     labs(title = plot_title, subtitle = plot_subtitle)
 
-  p1
-
 
   # diagnostic plot 2
   fill_plot_values_2 <- c('orange', 'lightblue', 'transparent')
@@ -154,7 +154,7 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
         data = df_base_composition %>%
           dplyr::filter(!is.na(on_target_edit)),
         stat = 'identity',
-        position = position_stack(),
+        position = position_dodge2(preserve = 'single'),
         aes(x = genomic_position, y = percentage, fill = on_target_edit)
       ) +
       scale_x_discrete(labels = names(x_axis_plot_name), drop = F) +
@@ -225,13 +225,22 @@ generate_edit_site_diagnostic_plots <- function(edit_site) {
     ) +
     labs(title = plot_title, subtitle = plot_subtitle, y = 'percentage')
 
-  return(
+  if (print_plots) {
+    print(p1)
+    print(p2)
+    print(p3)
+    print(p4)
+  }
+
+  invisible(return(
     list(
       'heatmap' = p1,
       'on_target_only' = p2,
       'depth' = p3,
-      'stacked_percentage' = p4
-    )
+      'stacked_percentage' = p4,
+      'df_standardized_locus' = df_standardized_locus,
+      'df_base_composition' = df_base_composition
+    ))
   )
 }
 
